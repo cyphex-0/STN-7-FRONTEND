@@ -567,20 +567,15 @@ function QuizInterface({ quiz, courseId, lessonId, enrollment, onComplete }) {
         setAnswers({ ...answers, [questionIdx]: optionIdx });
     };
 
+    const handleRetake = () => {
+        setSubmitted(false);
+        setPreviousSubmission(null);
+        setAnswers({});
+        setError(null);
+        setScore(null);
+    };
+
     const handleSubmit = async () => {
-        // Allow resubmission - students can retake quizzes
-        // Just show a warning if they've already submitted
-        if (submitted && previousSubmission) {
-            const confirmRetake = window.confirm(
-                "You have already submitted this quiz. Do you want to submit again? Your new score will replace the previous one."
-            );
-            if (!confirmRetake) {
-                return;
-            }
-            // Reset submission state to allow new submission
-            setSubmitted(false);
-            setPreviousSubmission(null);
-        }
 
         // Validate all questions are answered
         if (Object.keys(answers).length !== quiz.length) {
@@ -680,41 +675,20 @@ function QuizInterface({ quiz, courseId, lessonId, enrollment, onComplete }) {
                     )}
                 </div>
 
-                {previousSubmission && !submitted && (
-                    <div className="alert alert-info mt-3 sm:mt-4">
-                        <div>
-                            <h4 className="font-bold text-sm sm:text-base">Previous Quiz Results</h4>
-                            <p className="text-base sm:text-lg mt-2">
-                                You scored: <span className="font-bold text-primary">{previousSubmission.percent}%</span>
-                            </p>
-                            <p className="text-xs sm:text-sm mt-1 text-base-content/70">
-                                {previousSubmission.score} out of {previousSubmission.total} questions correct
-                            </p>
-                            <p className="text-xs mt-1 text-base-content/60">
-                                Submitted: {new Date(previousSubmission.createdAt || previousSubmission.submittedAt).toLocaleString()}
-                            </p>
-                            <p className="text-xs mt-2 text-base-content/60">
-                                💡 You can change your answers below and click "Retake Quiz" to submit a new attempt
-                            </p>
-                        </div>
-                    </div>
-                )}
+                
 
                 <div className="space-y-4 sm:space-y-6 mt-3 sm:mt-4">
                     {quiz.map((question, qIdx) => {
                         const userAnswer = answers[qIdx];
                         const isCorrect = userAnswer === question.correctIndex;
                         const showResults = submitted && previousSubmission;
-                        const showReview = previousSubmission && !submitted;
-
+                        
                         return (
                             <div
                                 key={qIdx}
                                 className={`border p-3 sm:p-4 rounded ${showResults && isCorrect ? 'border-success bg-success/10' :
                                     showResults && !isCorrect ? 'border-error bg-error/10' :
-                                        showReview && isCorrect ? 'border-success bg-success/10' :
-                                            showReview && !isCorrect ? 'border-error bg-error/10' :
-                                                'border-base-300'
+                                        'border-base-300'
                                     }`}
                             >
                                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-2 sm:mb-3">
@@ -750,20 +724,14 @@ function QuizInterface({ quiz, courseId, lessonId, enrollment, onComplete }) {
                                     </div>
                                 )}
 
-                                {showReview && !loading && (
-                                    <p className="text-xs mb-2 text-base-content/70">
-                                        💡 Correct answer: <span className="font-semibold">{question.options[question.correctIndex]}</span>
-                                    </p>
-                                )}
+                                
                                 <div className="space-y-2">
                                     {question.options?.map((option, oIdx) => (
                                         <label
                                             key={oIdx}
                                             className={`cursor-pointer flex gap-2 sm:gap-3 p-2 rounded transition ${showResults && oIdx === question.correctIndex ? 'bg-success/20' :
                                                 showResults && oIdx === userAnswer && !isCorrect ? 'bg-error/20' :
-                                                    showReview && oIdx === question.correctIndex ? 'bg-success/20' :
-                                                        showReview && oIdx === userAnswer && !isCorrect ? 'bg-error/20' :
-                                                            'hover:bg-base-200'
+                                                    'hover:bg-base-200'
                                                 }`}
                                         >
                                             <input
@@ -785,12 +753,7 @@ function QuizInterface({ quiz, courseId, lessonId, enrollment, onComplete }) {
                                             {showResults && oIdx === userAnswer && !isCorrect && (
                                                 <span className="text-error font-semibold">✗ Your Answer</span>
                                             )}
-                                            {showReview && !loading && oIdx === question.correctIndex && (
-                                                <span className="text-success">✓ Correct</span>
-                                            )}
-                                            {showReview && !loading && oIdx === userAnswer && !isCorrect && (
-                                                <span className="text-error">✗ Your Answer</span>
-                                            )}
+                                            
                                         </label>
                                     ))}
                                 </div>
@@ -805,22 +768,30 @@ function QuizInterface({ quiz, courseId, lessonId, enrollment, onComplete }) {
                     </div>
                 )}
 
-                <button
-                    onClick={handleSubmit}
-                    disabled={loading || Object.keys(answers).length !== quiz.length}
-                    className="btn btn-primary btn-sm sm:btn-md mt-4 sm:mt-6 w-full"
-                >
-                    {loading ? (
-                        <>
-                            <span className="loading loading-spinner loading-sm"></span>
-                            <span className="hidden sm:inline">Submitting...</span>
-                        </>
-                    ) : previousSubmission ? (
-                        "Retake Quiz"
-                    ) : (
-                        "Submit Quiz"
-                    )}
-                </button>
+                {submitted && previousSubmission ? (
+                    <button
+                        onClick={handleRetake}
+                        disabled={loading}
+                        className="btn btn-outline btn-primary btn-sm sm:btn-md mt-4 sm:mt-6 w-full"
+                    >
+                        Retake Quiz
+                    </button>
+                ) : (
+                    <button
+                        onClick={handleSubmit}
+                        disabled={loading || Object.keys(answers).length !== quiz.length}
+                        className="btn btn-primary btn-sm sm:btn-md mt-4 sm:mt-6 w-full"
+                    >
+                        {loading ? (
+                            <>
+                                <span className="loading loading-spinner loading-sm"></span>
+                                <span className="hidden sm:inline">Submitting...</span>
+                            </>
+                        ) : (
+                            "Submit Quiz"
+                        )}
+                    </button>
+                )}
 
                 {/* Show quiz results immediately after submission */}
                 {submitted && previousSubmission && (
