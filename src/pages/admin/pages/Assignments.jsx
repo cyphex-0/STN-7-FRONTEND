@@ -310,28 +310,34 @@ export default function Assignments() {
                 <>
                     {/* Table view for md+ */}
                     <div className="hidden md:block overflow-x-auto border border-base-300 rounded-lg">
-                        <table className="table w-full">
-                            <thead className="bg-base-200">
+                        <table className="table table-sm w-full">
+                            <thead className="bg-base-200 text-xs sm:text-sm">
                                 <tr>
-                                    <th>Student</th>
+                                    <th className="whitespace-nowrap w-36">Student</th>
                                     <th>Course</th>
                                     <th>Lesson</th>
-                                    <th>Submission</th>
-                                    <th>Submitted Date</th>
-                                    <th>Status</th>
-                                    <th>Grade</th>
-                                    <th>Actions</th>
+                                    <th className="whitespace-nowrap w-28">Submission</th>
+                                    <th className="whitespace-nowrap w-28">Submitted Date</th>
+                                    <th className="whitespace-nowrap text-center w-24">Status</th>
+                                    <th className="whitespace-nowrap text-center w-16">Grade</th>
+                                    <th className="whitespace-nowrap text-center w-28">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {filteredAssignments.map((assign) => (
-                                    <tr key={assign._id} className="hover:bg-base-100">
-                                        <td className="font-semibold">{assign.student?.name}</td>
-                                        <td>{assign.course?.title}</td>
-                                        <td className="max-w-xs">
-                                            <span className="text-sm">{assign.lessonTitle || "Unknown"}</span>
+                                    <tr key={assign._id} className="hover:bg-base-100 transition-colors">
+                                        <td className="font-semibold whitespace-nowrap w-36">{assign.student?.name}</td>
+                                        <td className="max-w-[200px]">
+                                            <span className="line-clamp-2 text-sm font-medium" title={assign.course?.title}>
+                                                {assign.course?.title}
+                                            </span>
                                         </td>
-                                        <td className="max-w-xs">
+                                        <td className="max-w-[200px]">
+                                            <span className="line-clamp-2 text-sm" title={assign.lessonTitle || "Unknown"}>
+                                                {assign.lessonTitle || "Unknown"}
+                                            </span>
+                                        </td>
+                                        <td className="w-28 max-w-[120px]">
                                             {assign.answerType === "link" ? (
                                                 <a
                                                     href={assign.answer}
@@ -348,8 +354,8 @@ export default function Assignments() {
                                                 </span>
                                             )}
                                         </td>
-                                        <td>{new Date(assign.createdAt).toLocaleDateString()}</td>
-                                        <td>
+                                        <td className="whitespace-nowrap text-sm">{new Date(assign.createdAt).toLocaleDateString()}</td>
+                                        <td className="whitespace-nowrap text-center">
                                             <span
                                                 className={`badge ${assign.status === "submitted"
                                                     ? "badge-warning"
@@ -359,7 +365,7 @@ export default function Assignments() {
                                                 {assign.status === "submitted" ? "Pending" : "Reviewed"}
                                             </span>
                                         </td>
-                                        <td>
+                                        <td className="whitespace-nowrap text-center">
                                             {assign.grade !== null && assign.grade !== undefined ? (
                                                 <span className={`font-bold ${assign.grade >= 70 ? 'text-success' : assign.grade >= 50 ? 'text-warning' : 'text-error'}`}>
                                                     {assign.grade}%
@@ -368,8 +374,8 @@ export default function Assignments() {
                                                 <span className="text-base-content/50">-</span>
                                             )}
                                         </td>
-                                        <td>
-                                            <div className="flex items-center gap-2">
+                                        <td className="whitespace-nowrap">
+                                            <div className="flex items-center justify-center gap-2">
                                                 {assign.status === "submitted" ? (
                                                     <button
                                                         className="btn btn-sm btn-primary"
