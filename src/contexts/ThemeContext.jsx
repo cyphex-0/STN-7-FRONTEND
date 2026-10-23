@@ -15,12 +15,15 @@ export const ThemeProvider = ({ children }) => {
         // Check localStorage first
         const savedTheme = localStorage.getItem("theme");
         if (savedTheme) {
+            document.documentElement.setAttribute("data-theme", savedTheme);
             return savedTheme;
         }
         // Check system preference
-        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        if (typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            document.documentElement.setAttribute("data-theme", "dark");
             return "dark";
         }
+        document.documentElement.setAttribute("data-theme", "light");
         return "light";
     });
 
@@ -40,4 +43,3 @@ export const ThemeProvider = ({ children }) => {
         </ThemeContext.Provider>
     );
 };
-

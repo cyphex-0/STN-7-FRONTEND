@@ -1,5 +1,7 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../store/slices/authSlice";
 import { LayoutDashboard, LogOut } from "lucide-react";
 import Logo from "./Logo";
 import ThemeToggle from "./ThemeToggle";
@@ -8,8 +10,10 @@ import { getMe } from "../../services/auth.api";
 
 export default function Navbar() {
     const navigate = useNavigate();
-    const token = getToken();
-    const [me, setMe] = useState(null);
+    const dispatch = useDispatch();
+    const { user: authUser, token: authToken } = useSelector((state) => state.auth);
+    const token = authToken || getToken();
+    const [me, setMe] = useState(authUser || null);
 
     const navLinkClass = ({ isActive }) =>
         isActive
@@ -17,25 +21,27 @@ export default function Navbar() {
             : "text-base-content/70 hover:text-primary transition-colors";
 
     const handleLogout = () => {
+        dispatch(logout());
         clearToken();
+        localStorage.removeItem("dev_bypass");
         setMe(null);
         navigate("/");
-        window.location.reload();
     };
 
     useEffect(() => {
-        const loadMe = async () => {
-            if (!token) return setMe(null);
-            try {
-                const res = await getMe();
-                setMe(res.data);
-            } catch {
-                clearToken();
-                setMe(null);
-            }
-        };
-        loadMe();
-    }, [token]);
+        if (authUser) {
+            setMe(authUser);
+        } else if (token) {
+            getMe()
+                .then((res) => setMe(res.data))
+                .catch(() => {
+                    clearToken();
+                    setMe(null);
+                });
+        } else {
+            setMe(null);
+        }
+    }, [authUser, token]);
 
     const initials = me?.name
         ? me.name.split(" ").map(w => w[0]).slice(0, 2).join("").toUpperCase()

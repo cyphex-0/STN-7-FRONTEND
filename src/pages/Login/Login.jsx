@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { loginUser } from "../../services/auth.api";
-import { saveToken } from "../../utils/auth";
+import { useDispatch } from "react-redux";
+import { loginAsync } from "../../store/slices/authSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff, LogIn, Sparkles, ShieldCheck, UserCheck } from "lucide-react";
 
 export default function Login() {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const [form, setForm] = useState({ email: "", password: "" });
     const [showPassword, setShowPassword] = useState(false);
@@ -23,13 +24,11 @@ export default function Login() {
         try {
             setLoading(true);
             setError(null);
-            const res = await loginUser({ email, password });
-            saveToken(res.data.token);
+            await dispatch(loginAsync({ email, password })).unwrap();
             localStorage.setItem("dev_bypass", "true");
             navigate(targetRoute);
-            window.location.reload();
         } catch (err) {
-            setError(err.response?.data?.message || "Direct portal login failed");
+            setError(typeof err === "string" ? err : err?.message || "Direct portal login failed");
         } finally {
             setLoading(false);
         }
@@ -41,14 +40,11 @@ export default function Login() {
             setLoading(true);
             setError(null);
 
-            const res = await loginUser(form);
-            saveToken(res.data.token);
-
-            const redirectPath = res.data.user?.role === 'admin' ? '/admin' : '/student';
+            const res = await dispatch(loginAsync(form)).unwrap();
+            const redirectPath = res.user?.role === 'admin' ? '/admin' : '/student';
             navigate(redirectPath);
-            window.location.reload();
         } catch (err) {
-            setError(err.response?.data?.message || "Login failed. Please check your credentials.");
+            setError(typeof err === "string" ? err : err?.message || "Login failed. Please check your credentials.");
         } finally {
             setLoading(false);
         }
