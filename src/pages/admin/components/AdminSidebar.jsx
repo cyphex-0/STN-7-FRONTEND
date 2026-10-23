@@ -100,7 +100,7 @@ export default function AdminSidebar() {
             )}
 
             {/* Desktop sidebar */}
-            <aside className="hidden lg:block bg-base-200 border-r-2 border-base-300 min-h-screen w-64 p-4 space-y-2 transition-all duration-200 shadow-lg">
+            <aside className="hidden lg:block bg-base-200 border-r-2 border-base-300 min-h-screen w-64 p-4 space-y-2 transition-all duration-200 shadow-lg shrink-0">
                 {menuItems.map((item) => (
                     <Item
                         key={item.to}
