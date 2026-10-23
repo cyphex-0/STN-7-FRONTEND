@@ -1,5 +1,6 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { LayoutDashboard, LogOut } from "lucide-react";
 import Logo from "./Logo";
 import ThemeToggle from "./ThemeToggle";
 import { getToken, clearToken } from "../../utils/auth";
@@ -82,42 +83,48 @@ export default function Navbar() {
                     {/* Desktop buttons if NOT logged in */}
                     {!token && (
                         <div className="hidden md:flex gap-2">
-                            <Link to="/login" className="btn btn-sm btn-ghost">Login</Link>
-                            <Link to="/register" className="btn btn-sm btn-primary">Enroll Now</Link>
+                            <Link to="/login" className="btn btn-sm btn-ghost cursor-pointer">Login</Link>
+                            <Link to="/register" className="btn btn-sm btn-primary cursor-pointer">Enroll Now</Link>
                         </div>
                     )}
 
                     {/* Desktop avatar if logged in */}
                     {token && me && (
                         <div className="hidden md:block dropdown dropdown-end">
-                            <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
-                                <div className="w-9 rounded-full bg-primary text-primary-content flex items-center justify-center font-bold">
+                            <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar focus:outline-none">
+                                <div className="w-9 h-9 rounded-full bg-primary text-primary-content flex items-center justify-center font-bold text-sm shadow-sm ring-2 ring-primary/20">
                                     {initials}
                                 </div>
-                            </label>
+                            </div>
 
                             <ul
                                 tabIndex={0}
-                                className="dropdown-content mt-3 p-3 shadow bg-base-100 rounded-box w-60 border border-base-300"
+                                className="dropdown-content menu z-50 mt-3 p-2 shadow-2xl bg-base-100 rounded-2xl w-60 border border-base-300"
                             >
-                                <div className="px-2 pb-2">
-                                    <p className="font-semibold">{me.name}</p>
-                                    <p className="text-sm text-base-content/70">{me.email}</p>
-                                    <p className="text-xs badge badge-outline mt-2">{me.role}</p>
+                                <div className="px-3 py-2 border-b border-base-200 mb-1">
+                                    <p className="font-semibold text-base-content text-sm">{me.name}</p>
+                                    <p className="text-xs text-base-content/70 truncate">{me.email}</p>
+                                    <span className="badge badge-xs badge-outline mt-1.5 capitalize">{me.role}</span>
                                 </div>
 
-                                <div className="my-2 border-t border-base-300" />
-
-                                {/* ✅ Dashboard inside dropdown only when logged in */}
                                 <li>
-                                    <Link to={me.role === "admin" ? "/admin" : "/student"}>
-                                        Dashboard
+                                    <Link
+                                        to={me.role === "admin" ? "/admin" : "/student"}
+                                        className="flex items-center gap-2.5 py-2.5 px-3 rounded-lg font-medium cursor-pointer hover:bg-base-200 transition-colors"
+                                    >
+                                        <LayoutDashboard className="w-4 h-4 text-primary" />
+                                        <span>Dashboard</span>
                                     </Link>
                                 </li>
 
                                 <li>
-                                    <button onClick={handleLogout} className="text-red-500">
-                                        Logout
+                                    <button
+                                        type="button"
+                                        onClick={handleLogout}
+                                        className="flex items-center gap-2.5 py-2.5 px-3 rounded-lg font-medium text-error hover:bg-error/10 cursor-pointer w-full text-left transition-colors"
+                                    >
+                                        <LogOut className="w-4 h-4" />
+                                        <span>Logout</span>
                                     </button>
                                 </li>
                             </ul>
@@ -126,20 +133,19 @@ export default function Navbar() {
 
                     {/* Mobile hamburger */}
                     <div className="dropdown dropdown-end md:hidden">
-                        <label tabIndex={0} className="btn btn-ghost btn-circle">
+                        <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
                                     d="M4 6h16M4 12h16M4 18h16" />
                             </svg>
-                        </label>
+                        </div>
 
                         <ul
                             tabIndex={0}
                             className="
-                menu menu-sm dropdown-content mt-3 p-3 shadow
-                bg-base-100 rounded-box w-56 border border-base-300
-                items-center text-center max-h-32 overflow-hidden
+                menu menu-sm dropdown-content z-50 mt-3 p-3 shadow-2xl
+                bg-base-100 rounded-2xl w-60 border border-base-300
               "
                         >
                             <li><NavLink className={navLinkClass} to="/" end>Home</NavLink></li>
@@ -152,7 +158,8 @@ export default function Navbar() {
                                         className={navLinkClass}
                                         to={me.role === "admin" ? "/admin" : "/student"}
                                     >
-                                        Dashboard
+                                        <LayoutDashboard className="w-4 h-4 text-primary" />
+                                        <span>Dashboard</span>
                                     </NavLink>
                                 </li>
                             )}
@@ -162,35 +169,33 @@ export default function Navbar() {
                             {!token ? (
                                 <>
                                     <li className="w-full">
-                                        <Link to="/login" className="btn btn-ghost btn-sm w-full">Login</Link>
+                                        <Link to="/login" className="btn btn-ghost btn-sm w-full cursor-pointer">Login</Link>
                                     </li>
                                     <li className="w-full">
-                                        <Link to="/register" className="btn btn-primary btn-sm w-full">Enroll Now</Link>
+                                        <Link to="/register" className="btn btn-primary btn-sm w-full cursor-pointer">Enroll Now</Link>
                                     </li>
                                 </>
                             ) : (
                                 <>
-                                    <div className="flex flex-col items-center gap-2 py-2">
-                                        <div className="w-12 h-12 rounded-full bg-primary text-primary-content flex items-center justify-center font-bold">
+                                    <div className="flex flex-col items-center gap-1 py-2 text-center">
+                                        <div className="w-10 h-10 rounded-full bg-primary text-primary-content flex items-center justify-center font-bold text-sm">
                                             {initials}
                                         </div>
-                                        <p className="font-semibold">{me?.name}</p>
+                                        <p className="font-semibold text-sm">{me?.name}</p>
                                         <p className="text-xs text-base-content/70">{me?.email}</p>
+                                        <span className="badge badge-xs badge-outline mt-1 capitalize">{me?.role}</span>
                                     </div>
 
                                     <div className="my-2 w-full border-t border-base-300" />
 
-                                    {/* ✅ Dashboard only when logged in */}
                                     <li className="w-full">
-                                        <Link to={me?.role === "admin" ? "/admin" : "/student"} className="w-full">
-                                            Dashboard
-                                        </Link>
-                                    </li>
-
-
-                                    <li className="w-full">
-                                        <button onClick={handleLogout} className="btn btn-ghost btn-sm w-full text-red-500">
-                                            Logout
+                                        <button
+                                            type="button"
+                                            onClick={handleLogout}
+                                            className="btn btn-ghost btn-sm w-full text-error hover:bg-error/10 cursor-pointer flex items-center justify-center gap-2"
+                                        >
+                                            <LogOut className="w-4 h-4" />
+                                            <span>Logout</span>
                                         </button>
                                     </li>
                                 </>
