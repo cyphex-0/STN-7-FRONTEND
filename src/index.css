@@ -236,8 +236,22 @@ html {
 
 /* Enhanced inputs */
 .input, .textarea, .select {
-  @apply border-base-300 focus:border-primary focus:ring-2 focus:ring-primary/20;
+  @apply border-base-300 focus:border-primary focus:ring-2 focus:ring-primary/20 w-full;
   transition: all 0.2s ease;
+}
+
+/* Form control vertical layout */
+.form-control {
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+}
+
+.form-control > .label {
+  display: flex !important;
+  justify-content: flex-start !important;
+  padding-bottom: 0.25rem !important;
+  width: 100% !important;
 }
 
 /* Gradient backgrounds */
