@@ -43,6 +43,7 @@ export default function AdminSidebar() {
 
     const menuItems = [
         { to: "/admin", label: "Overview", Icon: LayoutDashboard, end: true },
+        { to: "/admin/courses", label: "Manage Courses", Icon: BookOpen, end: true },
         { to: "/admin/courses/create", label: "Add Course", Icon: PlusCircle, end: true },
         { to: "/admin/video-classes", label: "Video Classes", Icon: Video, end: true },
         { to: "/admin/enrollments", label: "Enrollments", Icon: Users, end: true },
