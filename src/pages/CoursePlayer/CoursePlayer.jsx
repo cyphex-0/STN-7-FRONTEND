@@ -139,9 +139,9 @@ export default function CoursePlayer() {
                         <div className="card bg-base-100 shadow">
                             <div className="card-body p-3 sm:p-6">
                                 <h3 className="card-title text-base sm:text-lg md:text-xl break-words">{lesson.title}</h3>
-                                <div className="bg-base-300 rounded overflow-hidden mt-2 sm:mt-4">
+                                <div className="aspect-video w-full bg-base-300 rounded overflow-hidden mt-2 sm:mt-4">
                                     <iframe
-                                        style={{ height: '700px', width: '300px' }}
+                                        className="w-full h-full"
                                         src={convertToEmbedUrl(lesson.videoUrl)}
                                         title={lesson.title}
                                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -152,10 +152,10 @@ export default function CoursePlayer() {
 
                                 <button
                                     onClick={handleMarkComplete}
-                                    disabled={!!enrollment?.progress?.completedLessons?.includes(lesson)}
-                                    className={`btn btn-sm sm:btn-md ${enrollment?.progress?.completedLessons?.includes(lesson) ? "btn-disabled" : "btn-success"} mt-3 sm:mt-4 w-full sm:w-auto`}
+                                    disabled={!!enrollment?.progress?.completedLessons?.some(id => String(id) === String(lesson?._id))}
+                                    className={`btn btn-sm sm:btn-md ${enrollment?.progress?.completedLessons?.some(id => String(id) === String(lesson?._id)) ? "btn-disabled" : "btn-success"} mt-3 sm:mt-4 w-full sm:w-auto`}
                                 >
-                                    {enrollment?.progress?.completedLessons?.includes(lesson) ? "Completed ✓" : "✓ Mark as Complete"}
+                                    {enrollment?.progress?.completedLessons?.some(id => String(id) === String(lesson?._id)) ? "Completed ✓" : "✓ Mark as Complete"}
                                 </button>
                             </div>
                         </div>
