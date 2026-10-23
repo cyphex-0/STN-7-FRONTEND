@@ -58,7 +58,7 @@ export default function Assignments() {
             setReviewingId(null);
             setReviewNotes("");
             setReviewGrade("");
-            alert("Review submitted successfully! Student can now see their grade and feedback.");
+
         } catch (err) {
             console.error(err);
             alert(err.response?.data?.message || "Failed to submit review. Please try again.");
@@ -269,7 +269,7 @@ export default function Assignments() {
                                 <button
                                     className="btn btn-primary flex-1"
                                     onClick={submitReview}
-                                    disabled={actionLoading || !reviewGrade || !reviewNotes.trim()}
+                                    disabled={actionLoading}
                                 >
                                     {actionLoading ? (
                                         <>

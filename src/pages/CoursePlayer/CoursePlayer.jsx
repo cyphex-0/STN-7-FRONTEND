@@ -234,7 +234,7 @@ export default function CoursePlayer() {
                                                 const hasAssignment = !!les.assignmentPrompt;
                                                 const hasQuiz = les.quiz && les.quiz.length > 0;
                                                 const hasLiveClass = !!les.liveClassLink;
-                                                const isCompleted = enrollment?.progress?.completedLessons?.includes(les._id);
+                                                const isCompleted = enrollment?.progress?.completedLessons?.some(id => String(id) === String(les._id));
                                                 
                                                 // Check if live class is upcoming
                                                 const isUpcoming = hasLiveClass && les.liveClassDate && new Date(les.liveClassDate) > new Date();
@@ -313,6 +313,10 @@ function AssignmentSubmission({ courseId, lessonId, prompt, enrollment, onComple
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!answer.trim()) {
+            setError("Please enter your answer before submitting.");
+            return;
+        }
         setLoading(true);
         setError(null);
 
@@ -478,7 +482,7 @@ function AssignmentSubmission({ courseId, lessonId, prompt, enrollment, onComple
                         />
                         <button
                             type="submit"
-                            disabled={loading || !answer.trim()}
+                            disabled={loading}
                             className="btn btn-primary btn-sm sm:btn-md w-full"
                         >
                             {loading ? (
@@ -779,7 +783,7 @@ function QuizInterface({ quiz, courseId, lessonId, enrollment, onComplete }) {
                 ) : (
                     <button
                         onClick={handleSubmit}
-                        disabled={loading || Object.keys(answers).length !== quiz.length}
+                        disabled={loading}
                         className="btn btn-primary btn-sm sm:btn-md mt-4 sm:mt-6 w-full"
                     >
                         {loading ? (
