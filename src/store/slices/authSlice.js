@@ -43,6 +43,16 @@ export const getMeAsync = createAsyncThunk(
     }
 );
 
+const normalizeUser = (user) => {
+    if (!user) return null;
+    const resolvedId = user.id || user._id;
+    return {
+        ...user,
+        id: resolvedId,
+        _id: resolvedId,
+    };
+};
+
 const authSlice = createSlice({
     name: "auth",
     initialState: {
@@ -73,7 +83,7 @@ const authSlice = createSlice({
             })
             .addCase(registerAsync.fulfilled, (state, action) => {
                 state.loading = false;
-                state.user = action.payload.user;
+                state.user = normalizeUser(action.payload.user);
                 state.token = action.payload.token;
                 state.isAuthenticated = true;
             })
@@ -89,7 +99,7 @@ const authSlice = createSlice({
             })
             .addCase(loginAsync.fulfilled, (state, action) => {
                 state.loading = false;
-                state.user = action.payload.user;
+                state.user = normalizeUser(action.payload.user);
                 state.token = action.payload.token;
                 state.isAuthenticated = true;
             })
@@ -104,7 +114,7 @@ const authSlice = createSlice({
             })
             .addCase(getMeAsync.fulfilled, (state, action) => {
                 state.loading = false;
-                state.user = action.payload;
+                state.user = normalizeUser(action.payload);
                 state.isAuthenticated = true;
             })
             .addCase(getMeAsync.rejected, (state) => {
