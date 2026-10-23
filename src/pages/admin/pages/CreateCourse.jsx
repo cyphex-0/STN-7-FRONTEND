@@ -1,12 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createCourseAsync } from "../../../store/slices/adminSlice";
+import { createCourseAsync, clearSuccess, clearError } from "../../../store/slices/adminSlice";
 import { useNavigate } from "react-router-dom";
 
 export default function CreateCourse() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { creating, success, error } = useSelector((state) => state.admin);
+
+    useEffect(() => {
+        dispatch(clearSuccess());
+        dispatch(clearError());
+        return () => {
+            dispatch(clearSuccess());
+            dispatch(clearError());
+        };
+    }, [dispatch]);
 
     const [form, setForm] = useState({
         title: "",
@@ -72,18 +81,16 @@ export default function CreateCourse() {
         });
     };
 
-    if (success) {
-        return (
-            <div className="alert alert-success">
-                <span>{success}</span>
-            </div>
-        );
-    }
 
     return (
         <div className="max-w-4xl w-full">
             <h1 className="page-heading mb-4 sm:mb-6">Create New Course</h1>
 
+            {success && (
+                <div className="alert alert-success mb-4">
+                    <span>{success}</span>
+                </div>
+            )}
             {error && (
                 <div className="alert alert-error mb-4">
                     <span>{error}</span>
@@ -711,3 +718,4 @@ export default function CreateCourse() {
         </div>
     );
 }
+

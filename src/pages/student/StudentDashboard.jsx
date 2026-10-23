@@ -183,7 +183,7 @@ export default function StudentDashboard() {
                 </div>
             ) : (
                 <div className="space-y-4">
-                    {(enrollments || []).map((enrollment) => {
+                    {(enrollments || []).filter((e) => e.course && e.course._id).map((enrollment) => {
                         const courseId = enrollment.course?._id;
                         const isExpanded = expandedCourse === courseId;
                         const stats = courseStats[courseId];
