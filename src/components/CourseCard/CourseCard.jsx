@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
-import { User, BookOpen, Tag, ArrowRight, Star } from "lucide-react";
+import { BookOpen, ArrowRight, Star, Sparkles } from "lucide-react";
 
 export default function CourseCard({ course }) {
     const totalLessons = course.syllabus?.reduce((acc, mod) => acc + (mod.lessons?.length || 0), 0) || 0;
+    const ratingValue = course.rating || course.averageRating;
 
     return (
         <div className="card bg-base-100/90 backdrop-blur border border-base-300 shadow-lg hover:shadow-2xl hover:border-primary/40 transition-all duration-300 group rounded-3xl overflow-hidden flex flex-col h-full hover:-translate-y-1">
@@ -18,9 +19,15 @@ export default function CourseCard({ course }) {
                     ) : (
                         <div></div>
                     )}
-                    <div className="flex items-center gap-1 bg-base-100/90 backdrop-blur px-2.5 py-0.5 rounded-full text-xs font-extrabold text-amber-500 shadow-sm">
-                        <Star className="w-3.5 h-3.5 fill-amber-500" /> 4.9
-                    </div>
+                    {ratingValue ? (
+                        <div className="flex items-center gap-1 bg-base-100/90 backdrop-blur px-2.5 py-0.5 rounded-full text-xs font-extrabold text-amber-500 shadow-sm">
+                            <Star className="w-3.5 h-3.5 fill-amber-500" /> {Number(ratingValue).toFixed(1)}
+                        </div>
+                    ) : (
+                        <div className="flex items-center gap-1 bg-base-100/90 backdrop-blur px-2.5 py-0.5 rounded-full text-xs font-bold text-primary shadow-sm">
+                            <Sparkles className="w-3.5 h-3.5 text-primary" /> New
+                        </div>
+                    )}
                 </div>
 
                 <div className="flex items-center gap-2 text-xs font-semibold text-base-content/80 relative z-10">
