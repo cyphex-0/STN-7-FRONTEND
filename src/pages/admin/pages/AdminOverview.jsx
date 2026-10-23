@@ -38,15 +38,18 @@ export default function AdminOverview() {
     useEffect(() => {
         dispatch(fetchEnrollments());
         dispatch(fetchAssignments());
-        loadAnalytics();
+        const controller = new AbortController();
+        loadAnalytics(controller.signal);
+        return () => controller.abort();
     }, [dispatch]);
 
-    const loadAnalytics = async () => {
+    const loadAnalytics = async (signal) => {
         try {
             setLoading(true);
-            const res = await getAnalytics();
+            const res = await getAnalytics({ signal });
             setAnalytics(res.data);
         } catch (err) {
+            if (err.name === "CanceledError" || err.code === "ERR_CANCELED") return;
             console.error("Failed to load analytics:", err);
         } finally {
             setLoading(false);
