@@ -114,7 +114,7 @@ export default function Navbar() {
                                         Dashboard
                                     </Link>
                                 </li>
-                                <li><Link to="/profile">Profile</Link></li>
+
                                 <li>
                                     <button onClick={handleLogout} className="text-red-500">
                                         Logout
@@ -187,7 +187,7 @@ export default function Navbar() {
                                         </Link>
                                     </li>
 
-                                    <li className="w-full"><Link to="/profile">Profile</Link></li>
+
                                     <li className="w-full">
                                         <button onClick={handleLogout} className="btn btn-ghost btn-sm w-full text-red-500">
                                             Logout

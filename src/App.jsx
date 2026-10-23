@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import MainLayout from "./layouts/MainLayout";
 import ProtectedRoute from "./routes/ProtectedRoute";
@@ -53,6 +53,16 @@ export default function App() {
                 <Suspense fallback={<LoadingSpinner />}>
                   <StudentDashboard />
                 </Suspense>
+              </ProtectedRoute>
+            }
+          />
+
+          {/* profile redirect to dashboard (protected) */}
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Navigate to="/student" replace />
               </ProtectedRoute>
             }
           />
