@@ -55,7 +55,7 @@ export default function CourseDetails() {
 
         // Note: Since batches don't have _id in the model, we pass null
         // The backend can be updated later to handle batch references properly
-        dispatch(enrollCourseAsync({ courseId: id, batchId: selectedBatchId !== null ? selectedBatchId.toString() : null }));
+        dispatch(enrollCourseAsync({ courseId: id, batchId: selectedBatchId || null }));
     };
 
     useEffect(() => {
@@ -257,11 +257,11 @@ export default function CourseDetails() {
                         <div className="space-y-2">
                             {course.batches.map((batch, idx) => {
                                 // Use index as batch identifier since batches don't have _id
-                                const batchIndex = idx;
+                                const batchIndex = batch._id || idx.toString();
                                 const isSelected = selectedBatchId === batchIndex;
                                 return (
                                     <div
-                                        key={idx}
+                                        key={batch._id || idx}
                                         onClick={() => setSelectedBatchId(isSelected ? null : batchIndex)}
                                         className={`flex justify-between items-center p-3 rounded cursor-pointer transition ${isSelected
                                             ? "bg-primary text-primary-content border-2 border-primary"
@@ -285,7 +285,7 @@ export default function CourseDetails() {
                                 );
                             })}
                         </div>
-                        {selectedBatchId && (
+                        {selectedBatchId != null && (
                             <div className="mt-3 text-sm text-primary">
                                 ✓ Batch selected for enrollment
                             </div>
