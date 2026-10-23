@@ -21,7 +21,25 @@ export default function CoursesSection() {
     const [category, setCategory] = useState("");
     const [tags, setTags] = useState("");
 
-    const fetchCourses = async () => {
+    // Debounced filter states to prevent request storms and UI stutter
+    const [debouncedCategory, setDebouncedCategory] = useState(category);
+    const [debouncedTags, setDebouncedTags] = useState(tags);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedCategory(category);
+        }, 350);
+        return () => clearTimeout(timer);
+    }, [category]);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedTags(tags);
+        }, 350);
+        return () => clearTimeout(timer);
+    }, [tags]);
+
+    const fetchCourses = async (signal) => {
         try {
             setLoading(true);
             setError(null);
@@ -31,14 +49,17 @@ export default function CoursesSection() {
                 limit,
                 search: search || undefined,
                 sort: sort || undefined,
-                category: category || undefined,
-                tags: tags || undefined,
+                category: debouncedCategory || undefined,
+                tags: debouncedTags || undefined,
             };
 
-            const res = await getCourses(params);
+            const res = await getCourses(params, { signal });
             setCourses(res.data.courses || []);
             setTotalPages(res.data.totalPages || 1);
         } catch (err) {
+            if (err.name === "CanceledError" || err.code === "ERR_CANCELED") {
+                return; // Ignore canceled request cleanly on unmount or new filter change
+            }
             setError("Failed to load courses");
         } finally {
             setLoading(false);
@@ -46,9 +67,11 @@ export default function CoursesSection() {
     };
 
     useEffect(() => {
-        fetchCourses();
+        const controller = new AbortController();
+        fetchCourses(controller.signal);
+        return () => controller.abort();
         // eslint-disable-next-line
-    }, [page, sort, category, tags]);
+    }, [page, sort, debouncedCategory, debouncedTags]);
 
     const onSearchSubmit = (e) => {
         e.preventDefault();
@@ -59,7 +82,7 @@ export default function CoursesSection() {
     // reset page when filters change
     useEffect(() => {
         setPage(1);
-    }, [sort, category, tags]);
+    }, [sort, debouncedCategory, debouncedTags]);
 
     return (
         <div className="space-y-6">
